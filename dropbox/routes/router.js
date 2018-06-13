@@ -117,6 +117,13 @@ app.get('/typography', function (req, res) {
    res.render('typography');
 });
 
+
+app.get('/upload', function (req, res) {
+   res.render('upload');
+});
+
+
+
 //로그아웃 코드
       app.get('/logout', (req, res) => {
 
