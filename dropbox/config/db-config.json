@@ -2,5 +2,5 @@
   "host"     : "localhost",
   "user"     : "root",
   "password" : "autoset",
-  "database" : "auction"
+  "database" : "myowndropbox"
 }
