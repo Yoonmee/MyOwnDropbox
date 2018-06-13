@@ -40,8 +40,10 @@ module.exports = function(app){
 
 //메인 홈 코드
 app.get('/', function (req, res) {
-            res.render('index');
-
+    const sess = req.session;
+    res.render('index', {
+                session : sess
+             });
 });
 
 app.get('/index', function (req, res) {
@@ -78,7 +80,10 @@ app.get('/icons', function (req, res) {
 });
 
 app.get('/login', function (req, res) {
-   res.render('login');
+      const sess = req.session;
+  res.render('login', {
+              session : sess
+           });
 });
 
 app.get('/morris', function (req, res) {
@@ -101,6 +106,16 @@ app.get('/typography', function (req, res) {
    res.render('typography');
 });
 
+//로그아웃 코드
+      app.get('/logout', (req, res) => {
+
+        req.session.destroy(function (err) {
+            if (err) throw err;
+            res.redirect('/');
+        });
+    });
+
+
 app.post('/do_signin',  function (req,res){
        const body = req.body;
        const email = req.body.email;
@@ -117,7 +132,7 @@ app.post('/do_signin',  function (req,res){
                    console.log('없음');
                    // res.json({success: false});
                    res.redirect(url.format({
-                         pathname: '/signin',
+                         pathname: '/login',
                          query: {
                                'success': false,
                                'message': 'Login failed: ID does not exist'
@@ -127,7 +142,7 @@ app.post('/do_signin',  function (req,res){
                    if (pass != result[0].user_pw) {
                          console.log('비밀번호 불일치');
                          res.redirect(url.format({
-                               pathname: '/signin',
+                               pathname: '/login',
                                query: {
                                      'success': false,
                                      'message': 'Login failed: Password Incorrect'
