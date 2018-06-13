@@ -257,30 +257,60 @@ app.post('/make_folder',  function (req,res){
             console.log('filechecked' + temp);
 
             var params = {  Bucket: bucketname, Key: temp };
-            aws.getSignedUrl('getObject', params, function(err, url){
+            s3.getSignedUrl('getObject', params, function(err, url){
               console.log(url);
             });
-            s3.getObject(params, function(err, data)   {
-                        if (err) console.log(err, err.stack); // an error occurred
-                        else if(temp.substring(temp.length-1, temp.length)=='/'){
-                          fs.mkdir(temp,function() {});}
-                        else fs.writeFile(temp, data.Body, function(){});
-                        }
-                      );
+
+            // res.attachment(temp);
+            // var fileStream = s3.getObject(params).createReadStream();
+            // fileStream.pipe(res);
+
+            // s3.getObject(params, { stream : true }, function(err, data) {
+            //   if (err) console.log(err, err.stack);  // error
+            //   else {    console.log();
+            //   res.attachment(temp);
+            //   data.Stream.pipe(res);}
+            // });
+
+            var file = require('fs').createWriteStream(temp);
+            var params = {Bucket:bucketname, Key:temp};
+            if(temp.substring(temp.length-1,  temp.length)=='/'){
+              fs.mkdir(bucketname + "/" + temp,function() {});
+                console.log('download folder' + temp);
+            }
+              else{
+            fs.writeFile(bucketname + "/" +  temp, function(){
+              console.log('download' + temp);
+
+            });}
+            s3.getObject(params).createReadStream().pipe(file);
+
+
+
+              s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
+              if (err) console.log(err, err.stack); // an error occurred
+              else {
+                if(temp.substring(temp.length-1,  temp.length)=='/'){
+                  fs.mkdir(bucketname + "/" + temp,function() {});
+                    console.log('download folder' + temp);
+                }
+                  else{
+                fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
+                  console.log('download' + temp);
+                });}
+              }
+            });
+
+            // s3.getObject(params, function(err, data)   {
+            //             if (err) console.log(err, err.stack); // an error occurred
+            //             else if(temp.substring(temp.length-1, temp.length)=='/'){
+            //               fs.mkdir(temp,function() {});
+            //             }
+            //             else fs.writeFile(temp, data.Body, function(){});
+            //             }
+            //           );
           //
-          //   s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
-          //   if (err) console.log(err, err.stack); // an error occurred
-          //   else {
-          //     if(temp.substring(temp.length-1,  temp.length)=='/'){
-          //       fs.mkdir(bucketname + "/" + temp,function() {});
-          //         console.log('download folder' + temp);
-          //     }
-          //       else{
-          //     fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
-          //       console.log('download' + temp);
-          //     });}
-          //   }
-          // });
+
         }
           res.redirect('/tables');
   });
