@@ -9,7 +9,8 @@ const session = require('express-session');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const secret_key = crypto.randomBytes(48);
-
+var handlers = require('./handlers');
+var routerr = require('./router');
 
 var app = express();
 
@@ -53,10 +54,35 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var routes = {
+    '/home': handlers.home,
+  '/upload': handlers.upload,
+  '_static': handlers.serveStatic
+};
 
+function start(route, routes) {
 
-const server = app.listen(3000, function () {
-  console.log('Listening on port 3000');
-});
+  function onRequest(request, response) {
+
+    var pathname = url.parse(request.url).pathname;
+    var postData = '';
+
+    request.setEncoding('utf8');
+
+    request.addListener('data', function (postDataChunk) {
+      postData += postDataChunk;
+    });
+
+    request.addListener('end', function () {
+      route(routes, pathname, response, postData);
+    });
+  }
+  const server = app.listen(3000, function () {
+
+    console.log('Listening on port 3000');
+  });
+
+}
+const s = start(routerr.route, routes);
 
 module.exports = app;
