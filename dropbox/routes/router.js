@@ -267,11 +267,48 @@ app.post('/make_folder',  function (req,res){
         const body = req.body;
         var checkedfile = [];
         checkedfile = req.body.filechecked;
-
-        console.log('filechecked' + checkedfile);
-        res.redirect('/tables');
-
+        console.log(checkedfile.length);
+        for(var i = 0; i<checkedfile.length; i++)
+        {
+          var temp = checkedfile[i];
+            console.log('filechecked' + temp);
+            s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
+            if (err) console.log(err, err.stack); // an error occurred
+            else {
+              if(temp.substring(temp.length-1,  temp.length)=='/'){
+                fs.mkdir(bucketname + "/" + temp,function() {});
+                  console.log('download folder' + temp);
+              }
+                else{
+              fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
+                console.log('download' + temp);
+              });}
+            }
+          });
+        }
+          res.redirect('/tables');
   });
+
+  app.post('/file_delete',  function (req,res){
+
+         const sess = req.session;
+           const body = req.body;
+           var checkedfile = [];
+           checkedfile = req.body.filechecked;
+           console.log(checkedfile.length);
+           for(var i = 0; i<checkedfile.length; i++)
+           {
+             var temp = checkedfile[i];
+               console.log('filechecked' + temp);
+
+               var params = {  Bucket: bucketname, Key: temp };
+               s3.deleteObject(params, function(err, data) {
+                 if (err) console.log(err, err.stack);  // error
+                 else     console.log();                 // deleted
+               });
+             }
+             res.redirect('/tables');
+   });
 
 
 app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
@@ -368,6 +405,60 @@ app.post('/do_signin',  function (req,res){
              }
        });
  });
+
+
+  app.post("/user_theme_change_1", function (req,res){
+
+          db.query('UPDATE user SET user_theme = 1 WHERE user_email = ? ',
+          [sess.user_info.user_email], function(error,result){
+             if(error) throw error;
+             console.log('변경 완료. result: ',sess.user_info.user_id);
+             sess.user_info = result[0];
+             res.redirect(url.format({
+                      pathname: '/setting',
+                      query: {
+                            'success': true,
+                            'message': 'theme change success'
+                      }
+             }));
+          });
+        });
+
+  app.post("/user_theme_change_2", function (req,res){
+
+          db.query('UPDATE user SET user_theme = 2 WHERE user_email = ? ',
+          [sess.user_info.user_email], function(error,result){
+             if(error) throw error;
+             console.log('변경 완료. result: ',sess.user_info.user_id);
+            sess.user_info = result[0];
+             res.redirect(url.format({
+                      pathname: '/setting',
+                      query: {
+                            'success': true,
+                            'message': 'theme change success'
+                      }
+             }));
+          });
+        });
+
+
+  app.post("/user_theme_change_3", function (req,res){
+
+          db.query('UPDATE user SET user_theme = 3 WHERE user_email = ? ',
+          [sess.user_info.user_email], function(error,result){
+             if(error) throw error;
+             console.log('변경 완료. result: ',sess.user_info.user_id);
+             sess.user_info = result[0];
+             res.redirect(url.format({
+                      pathname: '/setting',
+                      query: {
+                            'success': true,
+                            'message': 'theme change success'
+                      }
+             }));
+          });
+        });
+
 
  app.post("/do_signup", function (req,res){
 
