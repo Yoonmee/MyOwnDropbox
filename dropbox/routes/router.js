@@ -164,18 +164,22 @@ app.get('/tables', function (req, res) {
     else {
 
       console.log(data.Contents.length + " files found in '"+bucketname+"' bucket");
-// sess.user_info.user_id
-      var vld = sess.user_info.user_id+ '/';
+
+      // var id = sess.user_info.user_id;
+      var id = '2';
+      var vld = id+ '/';
       // files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
 
-          if(vld==currentValue.Key.substring(0, sess.user_info.user_id.length + 1)){
+          if(vld==currentValue.Key.substring(0, id.length + 1)){
         // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
         //   if(vld ==  sess.user_info.user_id + '/'){
         //
             fs.exists(bucketname + "/" + currentValue.Key, function(exists){
-              files[index] = currentValue;
-                console.log(index + " " + currentValue.Key);
+
+                files[index] = currentValue;
+
+                console.log(index + " " +  files[index].Key);
               });
            }
         // Check if the file already exists?
@@ -188,14 +192,13 @@ app.get('/tables', function (req, res) {
             //     });
             //   }
             // });
+
           });
           res.render('tables', {
                       session : sess,
                       file : files
                    });
         }
-
-
       });
 
 
