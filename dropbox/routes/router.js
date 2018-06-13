@@ -1,7 +1,7 @@
 module.exports = function(app){
 
    const http = require('http');
-   // const db = require('../db');
+   const db = require('../db');
    const sha256 = require('sha256');
    const url = require('url');
    const nodemailer = require("nodemailer");
@@ -53,7 +53,7 @@ app.get('/blank', function (req, res) {
       res.render('blank');
  });
 
-    app.get('/buttons', function (req, res) {
+  app.get('/buttons', function (req, res) {
        res.render('buttons');
  });
 
@@ -101,5 +101,49 @@ app.get('/typography', function (req, res) {
    res.render('typography');
 });
 
+app.post('/do_signin',  function (req,res){
+       const body = req.body;
+       const email = req.body.email;
+       var pass = sha256(req.body.password);
+       console.log(body);
+       var flag = false;
+       var id = 0;
+       //유저 찾기
+       db.query('SELECT * FROM `user` WHERE `user_email` = ? LIMIT 1', [email], (err, result) => {
+             if (err) throw err;
+             console.log(result);
+
+             if (result.length === 0) {
+                   console.log('없음');
+                   // res.json({success: false});
+                   res.redirect(url.format({
+                         pathname: '/signin',
+                         query: {
+                               'success': false,
+                               'message': 'Login failed: ID does not exist'
+                         }
+                   }));
+             } else {
+                   if (pass != result[0].user_pw) {
+                         console.log('비밀번호 불일치');
+                         res.redirect(url.format({
+                               pathname: '/signin',
+                               query: {
+                                     'success': false,
+                                     'message': 'Login failed: Password Incorrect'
+                               }
+                         }));
+                   } else {
+                         console.log('로그인 성공');
+
+                         //세션에 유저 정보 저장
+                         req.session.user_info = result[0];
+                         flag = true;
+
+                      res.redirect('/');
+                   }
+             }
+       });
+ });
 
 }
