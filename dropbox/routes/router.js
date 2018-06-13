@@ -175,31 +175,16 @@ app.get('/tables', function (req, res) {
           if(vld==currentValue.Key.substring(0, id.length + 1)){
         // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
         //   if(vld ==  sess.user_info.user_id + '/'){
-
-            fs.exists(bucketname + "/" + currentValue.Key, function(exists){
-
-                files[i] = currentValue;
-                i++;
-                console.log(index + " " +  files[index].Key);
-              });
-           }else{}
-        // Check if the file already exists?
-
-            // s3.getObject({ Bucket: bucket, Key: currentValue.Key }, function(err, data)   {
-            //   if (err) console.log(err, err.stack); // an error occurred
-            //   else {
-            //
-            //     fs.writeFile(bucket + "/" + currentValue.Key, data.Body, function(){
-            //     });
-            //   }
-            // });
-
-          });
-          res.render('tables', {
-                      session : sess,
-                      file : files
-                   });
+        files[i] = currentValue;
+        i++;
         }
+      });
+      res.render('tables', {
+                  session : sess,
+                  file : files
+               });
+        }
+
       });
 });
 
@@ -233,7 +218,7 @@ var upload = multer({
    })
 });
 
-<<<<<<< HEAD
+
 app.post('/make_folder',  function (req,res){
   const sess = req.session;
        const body = req.body;
@@ -270,19 +255,32 @@ app.post('/make_folder',  function (req,res){
         {
           var temp = checkedfile[i];
             console.log('filechecked' + temp);
-            s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
-            if (err) console.log(err, err.stack); // an error occurred
-            else {
-              if(temp.substring(temp.length-1,  temp.length)=='/'){
-                fs.mkdir(bucketname + "/" + temp,function() {});
-                  console.log('download folder' + temp);
-              }
-                else{
-              fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
-                console.log('download' + temp);
-              });}
-            }
-          });
+
+            var params = {  Bucket: bucketname, Key: temp };
+            aws.getSignedUrl('getObject', params, function(err, url){
+              console.log(url);
+            });
+            s3.getObject(params, function(err, data)   {
+                        if (err) console.log(err, err.stack); // an error occurred
+                        else if(temp.substring(temp.length-1, temp.length)=='/'){
+                          fs.mkdir(temp,function() {});}
+                        else fs.writeFile(temp, data.Body, function(){});
+                        }
+                      );
+          //
+          //   s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
+          //   if (err) console.log(err, err.stack); // an error occurred
+          //   else {
+          //     if(temp.substring(temp.length-1,  temp.length)=='/'){
+          //       fs.mkdir(bucketname + "/" + temp,function() {});
+          //         console.log('download folder' + temp);
+          //     }
+          //       else{
+          //     fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
+          //       console.log('download' + temp);
+          //     });}
+          //   }
+          // });
         }
           res.redirect('/tables');
   });
@@ -309,8 +307,6 @@ app.post('/make_folder',  function (req,res){
    });
 
 
-=======
->>>>>>> f4f855da9e6034fe876feedafececfa1ac4a8191
 app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
 const sess = req.session;
 
@@ -408,15 +404,15 @@ app.post('/do_signin',  function (req,res){
  });
 
 
-  app.post("/user_theme_change_1", function (req,res){
-
+  app.get("/user_theme_change_1", function (req,res){
+const sess = req.session;
           db.query('UPDATE user SET user_theme = 1 WHERE user_email = ? ',
           [sess.user_info.user_email], function(error,result){
              if(error) throw error;
              console.log('변경 완료. result: ',sess.user_info.user_id);
              sess.user_info = result[0];
              res.redirect(url.format({
-                      pathname: '/setting',
+                      pathname: '/mypage',
                       query: {
                             'success': true,
                             'message': 'theme change success'
@@ -425,15 +421,15 @@ app.post('/do_signin',  function (req,res){
           });
         });
 
-  app.post("/user_theme_change_2", function (req,res){
-
+  app.get("/user_theme_change_2", function (req,res){
+const sess = req.session;
           db.query('UPDATE user SET user_theme = 2 WHERE user_email = ? ',
           [sess.user_info.user_email], function(error,result){
              if(error) throw error;
              console.log('변경 완료. result: ',sess.user_info.user_id);
             sess.user_info = result[0];
              res.redirect(url.format({
-                      pathname: '/setting',
+                      pathname: '/mypage',
                       query: {
                             'success': true,
                             'message': 'theme change success'
@@ -443,15 +439,15 @@ app.post('/do_signin',  function (req,res){
         });
 
 
-  app.post("/user_theme_change_3", function (req,res){
-
+  app.get("/user_theme_change_3", function (req,res){
+const sess = req.session;
           db.query('UPDATE user SET user_theme = 3 WHERE user_email = ? ',
           [sess.user_info.user_email], function(error,result){
              if(error) throw error;
              console.log('변경 완료. result: ',sess.user_info.user_id);
              sess.user_info = result[0];
              res.redirect(url.format({
-                      pathname: '/setting',
+                      pathname: '/mypage',
                       query: {
                             'success': true,
                             'message': 'theme change success'
