@@ -63,6 +63,14 @@ app.get('/mypage', function (req, res) {
 
 });
 
+app.get('/grid', function (req, res) {
+  const sess = req.session;
+  res.render('grid', {
+              session : sess
+           });
+
+});
+
 app.get('/blank', function (req, res) {
   const sess = req.session;
   res.render('blank', {
@@ -171,18 +179,13 @@ app.get('/tables', function (req, res) {
       var i = 0;
       // files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
-
+      //  files[index] = currentValue;
           if(vld==currentValue.Key.substring(0, id.length + 1)){
         // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
         //   if(vld ==  sess.user_info.user_id + '/'){
-
-            fs.exists(bucketname + "/" + currentValue.Key, function(exists){
-
-                files[i] = currentValue;
-                i++;
-                console.log(index + " " +  files[index].Key);
-              });
-           }else{}
+          files[i] = currentValue;
+          i++;
+          }
         // Check if the file already exists?
 
             // s3.getObject({ Bucket: bucket, Key: currentValue.Key }, function(err, data)   {
@@ -233,6 +236,44 @@ var upload = multer({
    })
 });
 
+app.post('/make_folder',  function (req,res){
+  const sess = req.session;
+       const body = req.body;
+       const foldername = req.body.foldername;
+
+       fs.exists(bucketname + "/" + foldername, function(exists){
+                  if (exists)
+                  {
+                    console.log("directory exists");
+                  }
+                  else
+                  {
+                    var params = { Bucket: bucketname , Key : req.session.user_info.user_id+'/'+foldername +'/', ACL: 'public-read', Body:'body does not matter' };
+                    s3.upload(params, function (err, data) {
+                    if (err) {
+                        console.log("Error creating the folder: ", err);
+                        } else {
+
+                        console.log("Successfully created a folder on S3");
+                        }
+                          res.redirect('/tables');
+                    });
+                  }
+                });
+ });
+
+ app.post('/file_download',  function (req,res){
+      const sess = req.session;
+        const body = req.body;
+        var checkedfile = [];
+        checkedfile = req.body.filechecked;
+
+        console.log('filechecked' + checkedfile);
+        res.redirect('/tables');
+
+  });
+
+
 app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
 const sess = req.session;
 
@@ -251,7 +292,6 @@ const sess = req.session;
 
   });
 });
-
 
 
 //로그아웃 코드
