@@ -55,6 +55,14 @@ app.get('/index', function (req, res) {
 
 });
 
+app.get('/mypage', function (req, res) {
+  const sess = req.session;
+  res.render('setting', {
+              session : sess
+           });
+
+});
+
 app.get('/blank', function (req, res) {
   const sess = req.session;
   res.render('blank', {
