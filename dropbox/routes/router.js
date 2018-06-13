@@ -199,6 +199,7 @@ app.get('/typography', function (req, res) {
 });
 
 
+
 app.get('/upload', function (req, res) {
   const sess = req.session;
 
@@ -285,21 +286,21 @@ app.post('/make_folder',  function (req,res){
             });}
             s3.getObject(params).createReadStream().pipe(file);
 
-
-
-              s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
-              if (err) console.log(err, err.stack); // an error occurred
-              else {
-                if(temp.substring(temp.length-1,  temp.length)=='/'){
-                  fs.mkdir(bucketname + "/" + temp,function() {});
-                    console.log('download folder' + temp);
-                }
-                  else{
-                fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
-                  console.log('download' + temp);
-                });}
-              }
-            });
+            //
+            //
+            //   s3.getObject({ Bucket: bucketname , Key: temp }, function(err, data)   {
+            //   if (err) console.log(err, err.stack); // an error occurred
+            //   else {
+            //     if(temp.substring(temp.length-1,  temp.length)=='/'){
+            //       fs.mkdir(bucketname + "/" + temp,function() {});
+            //         console.log('download folder' + temp);
+            //     }
+            //       else{
+            //     fs.writeFile(bucketname + "/" +  temp, data.Body, function(){
+            //       console.log('download' + temp);
+            //     });}
+            //   }
+            // });
 
             // s3.getObject(params, function(err, data)   {
             //             if (err) console.log(err, err.stack); // an error occurred
@@ -314,6 +315,105 @@ app.post('/make_folder',  function (req,res){
         }
           res.redirect('/tables');
   });
+
+  app.post('/file_share',  function (req,res){
+    var sharelink = [];
+       const sess = req.session;
+         const body = req.body;
+         var checkedfile = [];
+         var ctr = 0;
+         checkedfile = req.body.filechecked;
+         console.log(checkedfile.length);
+
+          checkedfile.forEach(function(currentValue, index, array){
+                ctr++;
+                  var temp = checkedfile[index];
+                    console.log('filechecked' + temp);
+
+                    var params = {  Bucket: bucketname, Key: temp };
+                    s3.getSignedUrl('getObject', params, function(err, url){
+                      sharelink[index] = url;
+
+                      console.log(sharelink[index]);
+                    });
+                if (ctr === array.length) {
+                  req.session.share = sharelink;
+                    res.render('share', {
+                       links : sharelink,
+                       session : sess
+                   });
+                }
+
+        });
+
+ });
+
+
+ app.get('/imgs', function (req, res) {
+ fs. readFile('logo.png', function(error,result){
+ res.writeHead(200, { 'Content-Type':'text/html'});
+ res.end(data);
+ });
+ });
+
+
+ app.get('/changeinfo', function (req, res) {
+   const sess = req.session;
+   res.render('changeinfo', {
+               session : sess
+            });
+
+ });
+
+  app.get("/change_user_info", function (req,res){
+   const sess = req.session;
+          db.query('DELETE FROM user WHERE user_email = ? ',
+          [sess.user_info.user_email], function(error,result){
+             if(error) throw error;
+             console.log('삭제 완료.');
+
+             res.redirect(url.format({
+                      pathname: '/',
+                      query: {
+                            'success': true,
+                            'message': 'delete user success'
+                      }
+             }));
+          });
+        });
+
+
+  app.post('/changeinfo', function (req,res){
+   const sess = req.session;
+
+    var body = req.body;
+           var name = body.name;
+           var passwd = sha256(body.password);
+
+          db.query('UPDATE user SET user_name = ?, user_pw WHERE user_email = ?  ',
+          [name, passwd, sess.user_info.user_email], function(error,result){
+             if(error) throw error;
+             console.log('수정 완료. result: ', name, passwd);
+
+             res.redirect(url.format({
+                      pathname: '/mypage',
+                      query: {
+                            'success': true,
+                            'message': 'delete user success'
+                      }
+             }));
+          });
+        });
+
+    app.get('/share', function (req, res) {
+      const sess = req.session;
+
+      res.render('share', {
+                  links : sharelink,
+                  session : sess
+               });
+
+    });
 
   app.post('/file_delete',  function (req,res){
 

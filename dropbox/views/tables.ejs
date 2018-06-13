@@ -25,6 +25,11 @@
             checkfile.method="post";
             checkfile.submit();
           }
+          else if(str=="share"){
+            checkfile.action="/file_share";
+            checkfile.method="post";
+            checkfile.submit();
+          }
           else{
 
           }
@@ -62,6 +67,7 @@
                       </form>
                       <button onclick='btn_click("download")'  class="btn btn-default" style="margin-right:10px;">다운로드</button>
                       <button onclick='btn_click("delete")' class="btn btn-default" style="margin-right:10px;">삭제</button>
+                      <button onclick='btn_click("share")' class="btn btn-default">공유</button>
                       <a href="upload" class="btn btn-default">업로드</a>
 
                   </div>
