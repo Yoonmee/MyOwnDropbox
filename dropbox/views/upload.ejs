@@ -3,12 +3,28 @@
 <head>
   <title>File Uploader</title>
   <link href="css/upload.css" rel="stylesheet">
+    <% include ./head.ejs %>
 </head>
 <body>
+  <div id="wrapper">
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+
+  <% include ./header.ejs %>
+  <% include ./navigator.ejs %>
+</nav>
+    <div id="page-wrapper">
   <div class="dropzone" id="dropzone">
     <span>Drop the files here...</span>
   </div>
   <input type="file" id="addFile" multiple>
+</div>
+<!-- /#page-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- jQuery -->
+<% include ./footer.ejs %>
   <script src="js/upload.js"></script>
 
 </body>

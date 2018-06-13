@@ -165,7 +165,10 @@ app.get('/typography', function (req, res) {
 
 
 app.get('/upload', function (req, res) {
-   res.render('upload');
+  const sess = req.session;
+  res.render('upload', {
+              session : sess
+           });
 });
 
 
