@@ -55,31 +55,58 @@ app.get('/index', function (req, res) {
 });
 
 app.get('/blank', function (req, res) {
-      res.render('blank');
- });
+  const sess = req.session;
+  res.render('blank', {
+              session : sess
+           });
+});
 
-  app.get('/buttons', function (req, res) {
-       res.render('buttons');
- });
+app.get('/buttons', function (req, res) {
+  const sess = req.session;
+  res.render('buttons', {
+              session : sess
+           });
 
- app.get('/error', function (req, res) {
-    res.render('error');
+});
+
+app.get('/error', function (req, res) {
+  const sess = req.session;
+  res.render('error', {
+              session : sess
+           });
+
 });
 
 app.get('/flot', function (req, res) {
-   res.render('flot');
+  const sess = req.session;
+  res.render('flot', {
+              session : sess
+           });
+
 });
 
 app.get('/forms', function (req, res) {
-   res.render('forms');
+  const sess = req.session;
+  res.render('forms', {
+              session : sess
+           });
+
 });
 
 app.get('/grid', function (req, res) {
-   res.render('grid');
+  const sess = req.session;
+  res.render('grid', {
+              session : sess
+           });
+
 });
 
 app.get('/icons', function (req, res) {
-   res.render('icons');
+  const sess = req.session;
+  res.render('icons', {
+              session : sess
+           });
+
 });
 
 app.get('/login', function (req, res) {
@@ -96,25 +123,44 @@ res.render('signup', {
        });
 });
 
-
 app.get('/morris', function (req, res) {
-   res.render('morris');
+  const sess = req.session;
+  res.render('morris', {
+              session : sess
+           });
+
 });
 
 app.get('/notifications', function (req, res) {
-   res.render('notifications');
+  const sess = req.session;
+  res.render('notifications', {
+              session : sess
+           });
+
 });
 
 app.get('/panels-wells', function (req, res) {
-   res.render('panels-wells');
+  const sess = req.session;
+  res.render('panels-wells', {
+              session : sess
+           });
+
 });
 
 app.get('/tables', function (req, res) {
-   res.render('tables');
+  const sess = req.session;
+  res.render('tables', {
+              session : sess
+           });
+
 });
 
 app.get('/typography', function (req, res) {
-   res.render('typography');
+  const sess = req.session;
+  res.render('typography', {
+              session : sess
+           });
+
 });
 
 //로그아웃 코드
