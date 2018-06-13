@@ -6,6 +6,25 @@ module.exports = function(app){
    const url = require('url');
    const nodemailer = require("nodemailer");
    const mailconfig = require('../config/mail-config.json');
+   const multer = require('multer');
+   const aws = require('aws-sdk');
+   const multerS3 = require('multer-s3');
+   const s3 = new aws.S3();
+   aws.config.update({
+   	accessKeyId: 'AKIAIFLEZQDRG7CAHDVA',
+       secretAccessKey: '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',
+       region: 'us-west-2'
+   });
+   var upload = multer({
+   storage: multerS3({
+       s3: s3,
+       bucket: 'hyunjunhw6',
+       key: function (req, file, cb) {
+           cb(null, file.originalname);
+       }
+   })
+});
+
    // const multer = require('multer');
   //  const _storage = multer.diskStorage({
   // destination: function (req, file, cb) {
@@ -166,9 +185,14 @@ app.get('/typography', function (req, res) {
 
 app.get('/upload', function (req, res) {
   const sess = req.session;
-  res.render('upload', {
-              session : sess
-           });
+
+   res.render('upload', {
+               session : sess
+            });
+});
+
+app.post('/do_upload', upload.array('uploadFile',1), function (req, res, next) {
+    res.redirect('tables');
 });
 
 

@@ -1,31 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang = "en">
 <head>
-  <title>File Uploader</title>
-  <link href="css/upload.css" rel="stylesheet">
     <% include ./head.ejs %>
 </head>
 <body>
-  <div id="wrapper">
+<div id="wrapper">
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
 
-  <% include ./header.ejs %>
-  <% include ./navigator.ejs %>
+<% include ./header.ejs %>
+<% include ./navigator.ejs %>
 </nav>
+
     <div id="page-wrapper">
-  <div class="dropzone" id="dropzone">
-    <span>Drop the files here...</span>
-  </div>
-  <input type="file" id="addFile" multiple>
-</div>
-<!-- /#page-wrapper -->
 
+<form class="form-horizontal" method="post" enctype="multipart/form-data" action="/do_upload">
+	<div class="form-group">
+		<div class="col-sm-4">
+			<input type="file" class="form-control"  name="uploadFile"/>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-4">
+			<input class="btn btn-primary" type="submit" value="Upload"/>
+		</div>
+	</div>
+</form>
 </div>
-<!-- /#wrapper -->
+</div>
 
-<!-- jQuery -->
-<% include ./footer.ejs %>
-  <script src="js/upload.js"></script>
+	<% include ./footer.ejs %>
+
 
 </body>
 </html>
