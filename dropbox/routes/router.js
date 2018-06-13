@@ -164,14 +164,21 @@ app.get('/tables', function (req, res) {
     else {
 
       console.log(data.Contents.length + " files found in '"+bucketname+"' bucket");
-
-      files = data.Contents;
+// sess.user_info.user_id
+      var vld = sess.user_info.user_id+ '/';
+      // files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
 
+          if(vld==currentValue.Key.substring(0, sess.user_info.user_id.length + 1)){
+        // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
+        //   if(vld ==  sess.user_info.user_id + '/'){
+        //
+            fs.exists(bucketname + "/" + currentValue.Key, function(exists){
+              files[index] = currentValue;
+                console.log(index + " " + currentValue.Key);
+              });
+           }
         // Check if the file already exists?
-        fs.exists(bucketname + "/" + currentValue.Key, function(exists){
-
-            console.log(index + " " + currentValue.Key);});
 
             // s3.getObject({ Bucket: bucket, Key: currentValue.Key }, function(err, data)   {
             //   if (err) console.log(err, err.stack); // an error occurred
@@ -215,7 +222,7 @@ app.get('/upload', function (req, res) {
 });
 
 
-   var upload = multer({
+var upload = multer({
    storage: multerS3({
        s3: s3,
        bucket: bucketname,
@@ -225,15 +232,16 @@ app.get('/upload', function (req, res) {
    })
 });
 
-app.post('/do_upload', upload.array('uploadFile',1), function (req, res, next) {
+app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
+const sess = req.session;
 
   db.query('INSERT INTO file(file_name, file_path, user_id) VALUES(?,?,?) ',
-  [email, , req.session.user_info.user_id], function(error,result){
+  [req.file.originalname, "" ,sess.user_info.user_id], function(error,result){
      if(error) throw error;
-     console.log('추가 완료. result: ',email, passwd, name);
+     console.log('추가 완료. result: ',req.file.originalname,sess.user_info.user_id);
 
      res.redirect(url.format({
-              pathname: '/login',
+              pathname: '/tables',
               query: {
                     'success': true,
                     'message': 'Sign up success'
@@ -241,8 +249,6 @@ app.post('/do_upload', upload.array('uploadFile',1), function (req, res, next) {
      }));
 
   });
-
-    res.redirect('tables');
 });
 
 
