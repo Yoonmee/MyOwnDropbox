@@ -47,7 +47,10 @@ app.get('/', function (req, res) {
 });
 
 app.get('/index', function (req, res) {
-            res.render('index');
+  const sess = req.session;
+  res.render('index', {
+              session : sess
+           });
 
 });
 
@@ -85,6 +88,14 @@ app.get('/login', function (req, res) {
               session : sess
            });
 });
+
+app.get('/signup', function (req, res) {
+  const sess = req.session;
+res.render('signup', {
+          session : sess
+       });
+});
+
 
 app.get('/morris', function (req, res) {
    res.render('morris');
@@ -161,4 +172,28 @@ app.post('/do_signin',  function (req,res){
        });
  });
 
+ app.post("/do_signup", function (req,res){
+
+          var body = req.body;
+          var email = body.email;
+          var name = body.name;
+          var passwd = sha256(body.password);
+
+         db.query('INSERT INTO user(user_email, user_pw, user_name) VALUES(?,?,?) ',
+         [email, passwd, name], function(error,result){
+            if(error) throw error;
+            console.log('추가 완료. result: ',email, passwd, name);
+
+            res.redirect(url.format({
+                     pathname: '/login',
+                     query: {
+                           'success': true,
+                           'message': 'Sign up success'
+                     }
+            }));
+            // res.render('registration', {
+            //    pass:true
+            //    });
+         });
+       });
 }

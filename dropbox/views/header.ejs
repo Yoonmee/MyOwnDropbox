@@ -210,7 +210,7 @@
                 <li><a href="login"><i class="fa fa-sign-out fa-fw"></i> Login</a>
                 </li>
                   <% } else { %>
-                <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                <li><a href="mypage"><i class="fa fa-user fa-fw"></i><%= session.user_info.user_name %> 님</a>
                 </li>
                 <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
                 </li>
