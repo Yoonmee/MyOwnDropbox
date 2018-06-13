@@ -10,7 +10,6 @@ const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const secret_key = crypto.randomBytes(48);
 
-
 var app = express();
 
 app.use(session({
@@ -53,10 +52,8 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
-
 const server = app.listen(3000, function () {
-  console.log('Listening on port 3000');
+console.log('Listening on port 3000');
 });
 
 module.exports = app;

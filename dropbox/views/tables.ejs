@@ -29,39 +29,33 @@
             <div class="row">
                 <div class="col-lg-12">
 
-                      <div style="margin-right:20px;" align="right">
-                        <a href="upload" class="btn btn-default">파일 업로드</a>
-                      </div>
+                  <div style="margin-right:20px;" align="right">
+                      <a href="download" class="btn btn-default" style="margin-right:10px;">다운로드</a>
+                      <a href="upload" class="btn btn-default">업로드</a>
+                  </div>
+
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                                 <thead>
                                     <tr>
+                                        <th>파일 선택</th>
                                         <th>이름</th>
                                         <th>크기</th>
                                         <th>수정된 날짜</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
+                                  <% file.forEach(function(f){ %>
                                     <tr class="odd gradeX">
-                                        <td>현준.txt</td>
-                                        <td>100MB</td>
-                                        <td>2018.06.13</td>
+                                        <td><input type="checkbox" value=""></td>
+                                        <td><%= f.Key %></td>
+                                        <td><%= f.Size %> Byte</td>
+                                        <td><%= f.LastModified %></td>
 
                                     </tr>
-                                    <tr class="even gradeC">
-                                      <td>혜진.txt</td>
-                                      <td>100MB</td>
-                                      <td>2018.06.13</td>
+                                    <% }) %>
 
-                                    </tr>
-                                    <tr class="odd gradeA">
-                                      <td>윤미.txt</td>
-                                      <td>100MB</td>
-                                      <td>2018.06.13</td>
-
-                                    </tr>
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
