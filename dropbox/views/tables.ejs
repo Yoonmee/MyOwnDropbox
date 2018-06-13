@@ -46,29 +46,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                  <% file.forEach(function(f){ %>
                                     <tr class="odd gradeX">
                                         <td><input type="checkbox" value=""></td>
-                                        <td>현준.txt</td>
-                                        <td>100MB</td>
-                                        <td>2018.06.13</td>
+                                        <td><%= f.Key %></td>
+                                        <td><%= f.Size %> Byte</td>
+                                        <td><%= f.LastModified %></td>
 
                                     </tr>
-                                    <tr class="even gradeC">
-                                      <td><input type="checkbox" value=""></td>
-                                      <td>혜진.txt</td>
-                                      <td>100MB</td>
-                                      <td>2018.06.13</td>
+                                    <% }) %>
 
-
-                                    </tr>
-                                    <tr class="odd gradeA">
-                                      <td><input type="checkbox" value=""></td>
-                                      <td>윤미.txt</td>
-                                      <td>100MB</td>
-                                      <td>2018.06.13</td>
-
-
-                                    </tr>
                                 </tbody>
                             </table>
                             <!-- /.table-responsive -->
