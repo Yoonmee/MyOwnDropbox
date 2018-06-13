@@ -168,20 +168,21 @@ app.get('/tables', function (req, res) {
       // var id = sess.user_info.user_id;
       var id = '2';
       var vld = id+ '/';
+      var i = 0;
       // files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
 
           if(vld==currentValue.Key.substring(0, id.length + 1)){
         // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
         //   if(vld ==  sess.user_info.user_id + '/'){
-        //
+
             fs.exists(bucketname + "/" + currentValue.Key, function(exists){
 
-                files[index] = currentValue;
-
+                files[i] = currentValue;
+                i++;
                 console.log(index + " " +  files[index].Key);
               });
-           }
+           }else{}
         // Check if the file already exists?
 
             // s3.getObject({ Bucket: bucket, Key: currentValue.Key }, function(err, data)   {
@@ -200,9 +201,6 @@ app.get('/tables', function (req, res) {
                    });
         }
       });
-
-
-
 });
 
 app.get('/typography', function (req, res) {
