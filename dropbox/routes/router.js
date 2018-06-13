@@ -57,6 +57,9 @@ app.get('/index', function (req, res) {
 
 app.get('/mypage', function (req, res) {
   const sess = req.session;
+  if (!sess.user_info) {
+              res.redirect('/');
+        }
   res.render('setting', {
               session : sess
            });
@@ -158,6 +161,9 @@ app.get('/panels-wells', function (req, res) {
 
 app.get('/tables', function (req, res) {
   const sess = req.session;
+  if (!sess.user_info) {
+              res.redirect('/');
+        }
   var files = [];
   s3.listObjects({ Bucket: bucketname }, function(err, data) {
     if (err) console.log(err, err.stack); // an error occurred
@@ -166,7 +172,7 @@ app.get('/tables', function (req, res) {
       console.log(data.Contents.length + " files found in '"+bucketname+"' bucket");
 
       // var id = sess.user_info.user_id;
-      var id = '2';
+      var id = sess.user_info.user_id;
       var vld = id+ '/';
       var i = 0;
       // files = data.Contents;
@@ -202,6 +208,9 @@ app.get('/typography', function (req, res) {
 
 app.get('/upload', function (req, res) {
   const sess = req.session;
+  if (!sess.user_info) {
+              res.redirect('/');
+        }
 
    res.render('upload', {
                session : sess
@@ -222,6 +231,9 @@ var upload = multer({
 
 app.post('/make_folder',  function (req,res){
   const sess = req.session;
+  if (!sess.user_info) {
+              res.redirect('/');
+        }
        const body = req.body;
        const foldername = req.body.foldername;
 
@@ -248,6 +260,9 @@ app.post('/make_folder',  function (req,res){
 
  app.post('/file_download',  function (req,res){
       const sess = req.session;
+      if (!sess.user_info) {
+              res.redirect('/');
+        }
         const body = req.body;
         var checkedfile = [];
         checkedfile = req.body.filechecked;
@@ -316,15 +331,63 @@ app.post('/make_folder',  function (req,res){
           res.redirect('/tables');
   });
 
+
+   async function asyncForEach(array, callback) {
+     for (let index = 0; index < array.length; index++) {
+       await callback(array[index], index, array)
+     }
+   }
+
+
+
   app.post('/file_share',  function (req,res){
     var sharelink = [];
        const sess = req.session;
+       if (!sess.user_info) {
+              res.redirect('/');
+        }
          const body = req.body;
          var checkedfile = [];
          var ctr = 0;
          checkedfile = req.body.filechecked;
          console.log(checkedfile.length);
+      //
+      //
+      //    asyncForEach(checkedfile, async () => {
+      //      await waitFor(50)
+      //      var temp = checkedfile[index];
+      //        console.log('filechecked' + temp);
+      //
+      //        var params = {  Bucket: bucketname, Key: temp };
+      //        s3.getSignedUrl('getObject', params, function(err, url){
+      //          sharelink[index] = url;
+      //
+      //          console.log(sharelink[index]);
+      //    })
+      //  })
+      //  res.render('share', {
+      //     links : sharelink,
+      //     session : sess
+      // });
+      // var index = 0;
+      // async () => {
+      //   asyncForEach(checkedfile, async () => {
+      //     await waitFor(50)
+      //     var temp = checkedfile[index];
+      //       console.log('filechecked' + temp);
+      //
+      //       var params = {  Bucket: bucketname, Key: temp };
+      //       s3.getSignedUrl('getObject', params, function(err, url){
+      //         sharelink[index] = url;
+      //
+      //         console.log(sharelink[index]);
+      //         index++;
+      //   })
+      // })
 
+
+
+        //  console.log('Done')
           checkedfile.forEach(function(currentValue, index, array){
                 ctr++;
                   var temp = checkedfile[index];
@@ -343,11 +406,12 @@ app.post('/make_folder',  function (req,res){
                        session : sess
                    });
                 }
-
         });
-
+       //  res.render('share', {
+       //     links : sharelink,
+       //     session : sess
+       // });
  });
-
 
  app.get('/imgs', function (req, res) {
  fs. readFile('logo.png', function(error,result){
@@ -367,6 +431,9 @@ app.post('/make_folder',  function (req,res){
 
   app.get("/change_user_info", function (req,res){
    const sess = req.session;
+   if (!sess.user_info) {
+              res.redirect('/');
+        }
           db.query('DELETE FROM user WHERE user_email = ? ',
           [sess.user_info.user_email], function(error,result){
              if(error) throw error;
@@ -385,7 +452,9 @@ app.post('/make_folder',  function (req,res){
 
   app.post('/changeinfo', function (req,res){
    const sess = req.session;
-
+   if (!sess.user_info) {
+                 res.redirect('/');
+           }
     var body = req.body;
            var name = body.name;
            var passwd = sha256(body.password);
@@ -407,7 +476,9 @@ app.post('/make_folder',  function (req,res){
 
     app.get('/share', function (req, res) {
       const sess = req.session;
-
+      if (!sess.user_info) {
+                    res.redirect('/');
+              }
       res.render('share', {
                   links : sharelink,
                   session : sess
@@ -418,6 +489,9 @@ app.post('/make_folder',  function (req,res){
   app.post('/file_delete',  function (req,res){
 
          const sess = req.session;
+         if (!sess.user_info) {
+              res.redirect('/');
+        }
            const body = req.body;
            var checkedfile = [];
            checkedfile = req.body.filechecked;
@@ -439,6 +513,9 @@ app.post('/make_folder',  function (req,res){
 
 app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
 const sess = req.session;
+if (!sess.user_info) {
+              res.redirect('/');
+        }
 
   db.query('INSERT INTO file(file_name, file_path, user_id) VALUES(?,?,?) ',
   [req.file.originalname, "" ,sess.user_info.user_id], function(error,result){
