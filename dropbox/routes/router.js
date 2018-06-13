@@ -11,7 +11,7 @@ module.exports = function(app){
    const multerS3 = require('multer-s3');
    const s3 = new aws.S3();
    var fs = require('fs');
-   var bucket = "hyunjunhw6"
+   var bucketname = "hyunjunhw6"
 
    aws.config.update({
    	accessKeyId: 'AKIAIFLEZQDRG7CAHDVA',
@@ -19,15 +19,6 @@ module.exports = function(app){
        region: 'us-west-2'
    });
 
-   var upload = multer({
-   storage: multerS3({
-       s3: s3,
-       bucket: 'hyunjunhw6',
-       key: function (req, file, cb) {
-           cb(null, file.originalname);
-       }
-   })
-});
 
    var smtpTransport = nodemailer.createTransport({
     service: 'Gmail',
@@ -160,17 +151,17 @@ app.get('/panels-wells', function (req, res) {
 app.get('/tables', function (req, res) {
   const sess = req.session;
   var files = [];
-  s3.listObjects({ Bucket: bucket }, function(err, data) {
+  s3.listObjects({ Bucket: bucketname }, function(err, data) {
     if (err) console.log(err, err.stack); // an error occurred
     else {
 
-      console.log(data.Contents.length + " files found in '"+bucket+"' bucket");
+      console.log(data.Contents.length + " files found in '"+bucketname+"' bucket");
 
       files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
 
         // Check if the file already exists?
-        fs.exists(bucket + "/" + currentValue.Key, function(exists){
+        fs.exists(bucketname + "/" + currentValue.Key, function(exists){
 
             console.log(index + " " + currentValue.Key);});
 
@@ -215,7 +206,34 @@ app.get('/upload', function (req, res) {
             });
 });
 
+
+   var upload = multer({
+   storage: multerS3({
+       s3: s3,
+       bucket: bucketname,
+       key: function (req, file, cb) {
+           cb(null, req.session.user_info.user_id+"/"+file.originalname);
+       }
+   })
+});
+
 app.post('/do_upload', upload.array('uploadFile',1), function (req, res, next) {
+
+  db.query('INSERT INTO file(file_name, file_path, user_id) VALUES(?,?,?) ',
+  [email, , req.session.user_info.user_id], function(error,result){
+     if(error) throw error;
+     console.log('추가 완료. result: ',email, passwd, name);
+
+     res.redirect(url.format({
+              pathname: '/login',
+              query: {
+                    'success': true,
+                    'message': 'Sign up success'
+              }
+     }));
+
+  });
+
     res.redirect('tables');
 });
 
@@ -270,7 +288,27 @@ app.post('/do_signin',  function (req,res){
                          req.session.user_info = result[0];
                          flag = true;
 
-                      res.redirect('/');
+                         fs.exists(bucketname + "/" + req.session.user_info.user_id, function(exists){
+                                    if (exists)
+                                    {
+                                      console.log("directory exists");
+                                    }
+                                    else
+                                    {
+                                      var params = { Bucket: bucketname , Key : req.session.user_info.user_id +'/', ACL: 'public-read', Body:'body does not matter' };
+                                      s3.upload(params, function (err, data) {
+                                      if (err) {
+                                          console.log("Error creating the folder: ", err);
+                                          } else {
+
+                                          console.log("Successfully created a folder on S3");
+                                          }
+                                            res.redirect('/');
+                                      });
+                                    }
+                                  });
+
+
                    }
              }
        });
