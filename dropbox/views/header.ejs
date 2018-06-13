@@ -1,5 +1,33 @@
 <!-- Navigation -->
-  <div class="navbar-header">
+
+<% if(!session.user_info) { %>
+<!-- 로그인 안하면 기본 색-->
+<% } else if (session.user_info.user_theme == 1) { %>
+<!-- 벚꽃색 -->
+  <style>
+  .navbar{
+    background-color: #FFB6C1
+  }
+  </style>
+<% } else if (session.user_info.user_theme == 2) { %>
+<!-- 하늘색 -->
+  <style>
+  .navbar{
+    background-color: #00EBFF
+  }
+  </style>
+<% } else if (session.user_info.user_theme == 3) { %>
+  <!-- 연두색 -->
+    <style>
+    .navbar{
+      background-color: #80E12A
+    }
+    </style>
+<% } else { %>
+  <!-- 기본색 -->
+<% } %>
+
+<div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span>

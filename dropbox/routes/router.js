@@ -63,14 +63,6 @@ app.get('/mypage', function (req, res) {
 
 });
 
-app.get('/grid', function (req, res) {
-  const sess = req.session;
-  res.render('grid', {
-              session : sess
-           });
-
-});
-
 app.get('/blank', function (req, res) {
   const sess = req.session;
   res.render('blank', {
@@ -179,13 +171,18 @@ app.get('/tables', function (req, res) {
       var i = 0;
       // files = data.Contents;
       data.Contents.forEach(function(currentValue, index, array){
-      //  files[index] = currentValue;
+
           if(vld==currentValue.Key.substring(0, id.length + 1)){
         // var vld = currentValue.Key.substring(0, sess.user_info.user_id.length+1)
         //   if(vld ==  sess.user_info.user_id + '/'){
-          files[i] = currentValue;
-          i++;
-          }
+
+            fs.exists(bucketname + "/" + currentValue.Key, function(exists){
+
+                files[i] = currentValue;
+                i++;
+                console.log(index + " " +  files[index].Key);
+              });
+           }else{}
         // Check if the file already exists?
 
             // s3.getObject({ Bucket: bucket, Key: currentValue.Key }, function(err, data)   {
@@ -236,6 +233,7 @@ var upload = multer({
    })
 });
 
+<<<<<<< HEAD
 app.post('/make_folder',  function (req,res){
   const sess = req.session;
        const body = req.body;
@@ -311,6 +309,8 @@ app.post('/make_folder',  function (req,res){
    });
 
 
+=======
+>>>>>>> f4f855da9e6034fe876feedafececfa1ac4a8191
 app.post('/do_upload', upload.single('uploadFile'), function (req, res, next) {
 const sess = req.session;
 
@@ -329,6 +329,7 @@ const sess = req.session;
 
   });
 });
+
 
 
 //로그아웃 코드
