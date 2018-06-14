@@ -5,4 +5,4 @@ Make dropbox using Amazon EC2, S3
 
 #node app.js
 
-#localhost:3000
+#go to localhost:3000 
