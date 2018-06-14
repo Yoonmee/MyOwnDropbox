@@ -6,6 +6,7 @@ module.exports = function(app){
    const url = require('url');
    const nodemailer = require("nodemailer");
    const mailconfig = require('../config/mail-config.json');
+   const s3config = require('../config/aws-config.json');
    const multer = require('multer');
    const aws = require('aws-sdk');
    const multerS3 = require('multer-s3');
@@ -13,11 +14,7 @@ module.exports = function(app){
    var fs = require('fs');
    var bucketname = "hyunjunhw6"
 
-   aws.config.update({
-   	accessKeyId: 'AKIAIFLEZQDRG7CAHDVA',
-       secretAccessKey: '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',
-       region: 'us-west-2'
-   });
+   aws.config.update(s3config);
 
 
    var smtpTransport = nodemailer.createTransport({
