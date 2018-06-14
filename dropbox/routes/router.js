@@ -172,7 +172,7 @@ app.get('/tables', function (req, res) {
       console.log(data.Contents.length + " files found in '"+bucketname+"' bucket");
 
       // var id = sess.user_info.user_id;
-      var id = sess.user_info.user_id;
+      var id = '2';
       var vld = id+ '/';
       var i = 0;
       // files = data.Contents;
@@ -273,9 +273,9 @@ app.post('/make_folder',  function (req,res){
             console.log('filechecked' + temp);
 
             var params = {  Bucket: bucketname, Key: temp };
-            s3.getSignedUrl('getObject', params, function(err, url){
-              console.log(url);
-            });
+            // s3.getSignedUrl('getObject', params, function(err, url){
+            //   console.log(url);
+            // });
 
             // res.attachment(temp);
             // var fileStream = s3.getObject(params).createReadStream();
@@ -290,15 +290,15 @@ app.post('/make_folder',  function (req,res){
 
             var file = require('fs').createWriteStream(temp);
             var params = {Bucket:bucketname, Key:temp};
-            if(temp.substring(temp.length-1,  temp.length)=='/'){
-              fs.mkdir(bucketname + "/" + temp,function() {});
-                console.log('download folder' + temp);
-            }
-              else{
-            fs.writeFile(bucketname + "/" +  temp, function(){
-              console.log('download' + temp);
-
-            });}
+            // if(temp.substring(temp.length-1,  temp.length)=='/'){
+            //   fs.mkdir(bucketname + "/" + temp,function() {});
+            //     console.log('download folder' + temp);
+            // }
+            //   else{
+            // fs.writeFile(bucketname + "/" +  temp, function(){
+            //   console.log('download' + temp);
+            //
+            // });}
             s3.getObject(params).createReadStream().pipe(file);
 
             //
@@ -413,12 +413,12 @@ app.post('/make_folder',  function (req,res){
        // });
  });
 
- app.get('/imgs', function (req, res) {
- fs. readFile('logo.png', function(error,result){
- res.writeHead(200, { 'Content-Type':'text/html'});
- res.end(data);
- });
- });
+ // app.get('/imgs', function (req, res) {
+ // fs. readFile('logo.png', function(error,result){
+ // res.writeHead(200, { 'Content-Type':'text/html'});
+ // res.end(result);
+ // });
+ // });
 
 
  app.get('/changeinfo', function (req, res) {
@@ -429,7 +429,7 @@ app.post('/make_folder',  function (req,res){
 
  });
 
-  app.get("/change_user_info", function (req,res){
+  app.get("/user_delete", function (req,res){
    const sess = req.session;
    if (!sess.user_info) {
               res.redirect('/');
@@ -450,7 +450,7 @@ app.post('/make_folder',  function (req,res){
         });
 
 
-  app.post('/changeinfo', function (req,res){
+  app.post('/change_user_info', function (req,res){
    const sess = req.session;
    if (!sess.user_info) {
                  res.redirect('/');
@@ -459,11 +459,12 @@ app.post('/make_folder',  function (req,res){
            var name = body.name;
            var passwd = sha256(body.password);
 
-          db.query('UPDATE user SET user_name = ?, user_pw WHERE user_email = ?  ',
+          db.query('UPDATE user SET user_name = ?, user_pw = ? WHERE user_email = ?  ',
           [name, passwd, sess.user_info.user_email], function(error,result){
              if(error) throw error;
              console.log('수정 완료. result: ', name, passwd);
 
+             sess.user_info = result[0];
              res.redirect(url.format({
                       pathname: '/mypage',
                       query: {

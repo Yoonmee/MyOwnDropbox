@@ -1,0 +1,12 @@
+convolution
+dw convolution
+pooling
+maxpooling
+affine
+relu
+
+chmod +x ./test.sh
+
+g++ -std=c++11 main.cpp
+
+./predict.sh
